@@ -88,8 +88,8 @@ time | 字符串（时间格式）| 必需 | 对应数据上传数据包中的ti
             "address": "dhcp",
             "mac": "11:22:33:44:55:99"
         },
-        "dns": ["8.8.8.8", "8.8.4.4"],
-        "ntp": "s2g.time.edu.cn",
+        "dns":["8.8.8.8", "8.8.4.4"],
+        "ntp":"s2g.time.edu.cn",
         "server":["username:password@tcp://usa88.net:20000", "tcp://usa88.net:20002"],
         "device":[
             {"uid":"temphumi.1","optype":5,"period":30,"raw":"DDBB7766554433221100FFEEDD","needAck":true},
@@ -101,7 +101,7 @@ time | 字符串（时间格式）| 必需 | 对应数据上传数据包中的ti
         "cleardata":"passphrase",
         "datetime":"2017-05-08 19:06:08",
         "checkupdate":"url",
-        "get": ["network", "device", "login", "bluetooth"]
+        "get":["network", "device", "login", "bluetooth"]
     }
 }
 特点：包含有gid,cmd属性，此数据包也可能是中心在收到其它网关或客户端发来的，然后需要转发给相应网关，中心在收到的数据包中增加sid属性（标识发送此命令的连接），然后根据gid转发给指定的网关
