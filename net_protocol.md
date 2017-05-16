@@ -92,7 +92,7 @@ time | 字符串（时间格式）| 必需 | 对应数据上传数据包中的ti
         "ntp": "s2g.time.edu.cn",
         "server":["username:password@tcp://usa88.net:20000", "tcp://usa88.net:20002"],
         "device":[
-            {"uid":"temphumi.1","optype":5,"period":30,"raw":"DDBB7766554433221100FFEEDD",needAck:true},
+            {"uid":"temphumi.1","optype":5,"period":30,"raw":"DDBB7766554433221100FFEEDD","needAck":true},
             {"uid":"temphumi.2","optype":3,"period":60,"mac":"","pin":"1234","report":"true"}
         ],
         "passphrase":"passphrase",
@@ -157,11 +157,11 @@ get|数组|非必须|需要获取的参数信息
 ##### 2.1 请求get属性位空的时候
 字段 | 类型 | 必要性 | 说明
 --- | --- | --- | ---
-status|整形|必须|为0表正确 为其它为错误代码
-errorMsg|字符串|必须|命令执行出错，错误信息，无错误此字段为空
+status|整形|必须|为0表正确，其它值为错误代码
+error|字符串|非必须|命令执行出错时(status!=0)的对应错误信息
 info|实体|必须|结果信息
 info/gid|实体|必须|原请求cmd/gid原样返回
-sndcount|整形|非必须|转发次数
+sndcount|整形|必须|转发次数
 ##### 2.2 请求的get属性不为空的时候
 回复参照 协议 3
 
