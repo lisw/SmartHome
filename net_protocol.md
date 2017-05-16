@@ -188,7 +188,7 @@ sndcount|整形|必须|转发次数
             "address": "dhcp",
             "mac": "11:22:33:44:55:99"
         },
-        "dns": ["8.8.8.8", "8.8.4.4"]
+        "dns": ["8.8.8.8", "8.8.4.4"],
         "ntp": "s2g.time.edu.cn",
         "server":["tcp://usa88.net:20000", "tcp://usa88.net:20002"],
         "username":"",
