@@ -89,7 +89,7 @@ time | 字符串（时间格式）| 必需 | 对应数据上传数据包中的ti
             "mac": "11:22:33:44:55:99"
         },
         "dns":["8.8.8.8", "8.8.4.4"],
-        "ntp":"s2g.time.edu.cn",
+        "ntp":"s2g.time.edu.cn",
         "server":["username:password@tcp://usa88.net:20000", "tcp://usa88.net:20002"],
         "device":[
             {"uid":"temphumi.1","optype":5,"period":30,"raw":"DDBB7766554433221100FFEEDD","needAck":true},
