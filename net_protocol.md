@@ -92,8 +92,8 @@ time | 字符串（时间格式）| 必需 | 对应数据上传数据包中的ti
         "ntp": "s2g.time.edu.cn",
         "server":["username:password@tcp://usa88.net:20000", "tcp://usa88.net:20002"],
         "device":[
-            {"uid":"temphumi.1","period":30,"raw":"DDBB7766554433221100FFEEDD"},
-            {"uid":"temphumi.2","period":60,"mac":"","pin":"1234","report":"true"}
+            {"uid":"temphumi.1","optype":5,"period":30,"raw":"DDBB7766554433221100FFEEDD",needAck:true},
+            {"uid":"temphumi.2","optype":3,"period":60,"mac":"","pin":"1234","report":"true"}
         ],
         "passphrase":"passphrase",
         "reboot":"passphrase",
@@ -110,12 +110,62 @@ time | 字符串（时间格式）| 必需 | 对应数据上传数据包中的ti
 应答：
 {
     "status": 0,
-    "sndcount": 1
+    "sndcount": 1,
+    "info":{
+            "gid": "45007730000899"
+           }
 }
 其中：
   status表示命令处理状态，0表示没有错误
   sndcount表示转发成功的网关数量
 ```
+#### 报文字段说明
+字段 | 类型 | 必要性 | 说明
+--- | --- | --- | ---
+gid	| 字符串 | 必需 | 表示网关设备编号
+cmd	| 实体| 必需 | 表示命令对象
+##### cmd 类型字段说明
+字段 | 类型 | 必要性 | 说明
+--- | --- | --- | ---
+gid| 字符串| 必需 | 唯一标识序列号
+name| 字符串 | 非必需 | 网关名称 	
+address | 字符串| 非必需 | 网关所处地方	
+eth0|实体|非必须|设置有线网卡
+eth0/address|字符串|必须| 网卡地址 例如：“192.168.1.123”或者“dhcp”
+eth0/netmask|字符串|非必须| 掩码，如果address设置了 dhcp 不需设置
+eth0/gateway|字符串|非必须| 网关，如果address 设置了dhcp 不需设置
+eth0/mac|字符串|必须| 网卡地址
+wlan0|实体|非必须|下级字段属性同eth0
+dns|数组|非必须|dns，ip地址字符串格式数组
+ntp|字符串|非必须|时间同步服务器 
+server|数组|非必须|信息平台连接地址
+device|数组|非必须|设置传感器设备
+device/uid|字符串|非必须|设置传感器设备
+device/optype|整形|必须|操作类型 1 获取未蓝牙列表 2获取已经连接蓝牙列表 3建立蓝牙连接 4删除蓝牙连接 5下发数据至蓝牙
+device/raw|字节数组|非必须|optype=5有效，要发给蓝牙的数据
+device/needAck|布尔类型|非必须|默认未false optype=5有效表示蓝牙是否会回复数据
+device/mac|布尔类型|非必须|蓝牙mac地址
+device/pin|布尔类型|非必须|连接连接时候 pin码
+passphrase|密码|必须|提供校验的网关密码，密码不对就无法设置
+reboot|字符串|非必须|重启，必须是“reboot”才会执行
+restore|字符串|非必须|重启，必须是“restore”才会执行
+cleardata|字符串|非必须|重启，必须是“cleardata”才会执行
+datetime|字符串（时间）|必须|命令时间
+checkupdate|字符串|非必须|检查更新的url地址
+get|数组|非必须|需要获取的参数信息
+####应答说明
+##### 2.1 请求get属性位空的时候
+字段 | 类型 | 必要性 | 说明
+--- | --- | --- | ---
+status|整形|必须|为0表正确 为其它为错误代码
+errorMsg|字符串|必须|命令执行出错，错误信息，无错误此字段为空
+info|实体|必须|结果信息
+info/gid|实体|必须|原请求cmd/gid原样返回
+sndcount|整形|非必须|转发次数
+##### 2.2 请求的get属性不为空的时候
+回复参照 协议 3
+
+
 ### 3. 来自于网关对命令包的应答数据包
 ```JSON
 {
@@ -166,6 +216,12 @@ time | 字符串（时间格式）| 必需 | 对应数据上传数据包中的ti
 特点：包含有gid,time属性，当网关超过一定时间（1分钟）没有向中心发送数据包时自动发送心跳包给中心
 应答：无，中心不向网关返回应答
 ```
+#### 请求报文说明
+字段 | 类型 | 必要性 | 说明
+--- | --- | --- | ---
+gid	| 字符串 | 必需 | 表示网关设备编号
+time| 字符串 | 必需 | 网关时间
+
 ### 5. 来自于命令行的状态获取命令包
 ```JSON
 {
@@ -193,3 +249,5 @@ time | 字符串（时间格式）| 必需 | 对应数据上传数据包中的ti
     heartbeat为该网关最新发送数据包的时间，用于超时判断
     sid为该网关与中心建立的连接socket identity
 ```
+
+
