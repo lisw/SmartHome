@@ -193,13 +193,9 @@ sndcount|整形|非必须|转发次数
         "server":["tcp://usa88.net:20000", "tcp://usa88.net:20002"],
         "username":"",
         "password":"",
-        "device":[
-            {"uid":"temphumi.1","period":30},
-            {"uid":"temphumi.2","period":60}
-        ],
         "bluetooth":[
-            {"mac":"mac1", "uid":"uid1", "name":"name1"},
-            {"mac":"mac2", "uid":"uid2", "name":"name2"},
+            {"mac":"mac1", "uid":"uid1", "name":"name1", "status": 0},
+            {"mac":"mac2", "uid":"uid2", "name":"name2", "status": 0},
         ]
     }
 }
@@ -207,6 +203,39 @@ sndcount|整形|非必须|转发次数
 应答：无，中心不向网关返回应答，而是根据sid将此数据包转发到相应的网络连接
 只有当网关收到的命令包的cmd中包含get属性时，上面的返回包中才会包含info属性
 ```
+#### 报文字段说明
+字段 | 类型 | 必要性 | 说明
+--- | --- | --- | ---
+status	| 数值   | 必需 | 表示命令的处理状态，0表示没有错误
+gid     | 字符串 | 必需 | 网关的唯一标识码
+sid     | 字符串 | 必需 | 网关与中心建立的连接socket identity
+error   | 字符串 | 非必需 | 命令执行有错误时的附加错误信息
+info    | 实体   | 非必需 | 中心向网关下发的命令2中含有get字段时，才有info字段
+info/name | 字符串 | 必需 | 网关名称
+info/address | 字符串 | 必需 | 网关的地理位置信息
+info/hardver | 字符串 | 必需 | 网关的硬件版本编号
+info/softver | 字符串 | 必需 | 网关的软件版本编号
+info/eth0/address | 字符串 | 必需 | 网关有线网络的IP地址
+info/eth0/netmask | 字符串 | 必需 | 网关有线网络的子网掩码
+info/eth0/gateway | 字符串 | 必需 | 网关有线网络的局域网网关地址
+info/eth0/mac     | 字符串 | 必需 | 网关有线网卡的MAC地址
+info/wlan0/address | 字符串 | 必需 | 网关无线网络的IP地址
+info/wlan0/netmask | 字符串 | 必需 | 网关无线网络的子网掩码
+info/wlan0/gateway | 字符串 | 必需 | 网关无线网络的局域网网关地址
+info/wlan0/mac     | 字符串 | 必需 | 网关无线网卡的MAC地址
+info/dns | 数组 | 必需 | dns服务器地址
+info/ntp | 字符串 | 必需 | ntp服务器地址
+info/server | 数组 | 必需 | 中心的网络地址
+info/username | 字符串 | 必需 | 网关登录中心的用户名
+info/password | 字符串 | 必需 | 网关登录中心的密码
+info/bluetooth| 实体 | 非必需 | 中心下发的命令2中含有device字段时才有该字段
+info/bluetooth/mac| 字符串 | 必需 | 蓝牙设备的MAC地址
+info/bluetooth/uid| 字符串 | 非必需 | 未知蓝牙设备无uid
+info/bluetooth/name| 字符串 | 必需 | 蓝牙设备的名称
+info/bluetooth/status| 数值 | 非必需 | 当命令2中的optype为3,4,5时相应蓝牙设备的执行结果
+
+
+
 ### 4. 来自于网关的心跳包
 ```JSON
 {
@@ -234,8 +263,11 @@ time| 字符串 | 必需 | 网关时间
     "gateways":{
         "45007720000801":{
             "datas":{
-                "bloodpressure.1":{"beatrate":68,"pressure":"110/75","time":"2016-05-08 23:58:09"},
-                "temphumi.1":{"humidity":52.5,"temperature":26.9,"time":"2016-05-08 23:58:09"}
+                "bluetooth":[
+                    {"mac":"mac1", "uid":"uid1", "name":"name1", "time":"2016-05-08 23:58:09"},
+                    {"mac":"mac2", "uid":"uid2", "name":"name2", "time":"2016-05-08 23:58:09"},
+                ],
+                "self":{"humidity":52.5,"temperature":26.9, "air":75, "time":"2016-05-08 23:58:09"}
             },
             "heartbeat":1462265811.1678,
             "sid":"sock01"
@@ -244,10 +276,17 @@ time| 字符串 | 必需 | 网关时间
 }
 其中：
   status表示命令处理状态，0表示没有错误
-  machines为记录的所有成功连接的网关
-    datas为从该网关上传的数据，每个uid只记录了最新的一条数据，可根据需要自行设计
-    heartbeat为该网关最新发送数据包的时间，用于超时判断
-    sid为该网关与中心建立的连接socket identity
+  gateways为记录的所有成功连接的网关
 ```
-
-
+#### 报文字段说明
+字段 | 类型 | 必要性 | 说明
+--- | --- | --- | ---
+status	| 数值 | 必需 | 表示命令的处理状态，0表示没有错误
+gateways| 实体 | 必需 |
+bluetooth| 数组 | 非必需 | 已连接蓝牙设备列表
+self | 实体 | 必需 | 网关自带传感器数据
+self/humidity | 必需 | 数值 | 空气湿度
+self/temperature | 必需 | 数值 | 温度
+self/air | 数值 | 必需 | 空气质量
+heartbeat | 数值 | 必需 | 该网关最新发送数据包的时间，用于超时判断
+sid | 字符串 | 必需 | 该网关与中心建立的连接socket identity
