@@ -127,18 +127,18 @@ cmd	| 实体| 必需 | 表示命令对象
 ##### cmd 类型字段说明
 字段 | 类型 | 必要性 | 说明
 --- | --- | --- | ---
-gid| 字符串| 必需 | 唯一标识序列号
-name| 字符串 | 非必需 | 网关名称 	
-address | 字符串| 非必需 | 网关所处地方	
+gid| 字符串| 非必需 | 用于设置网关ID
+name| 字符串 | 非必需 | 用于设置网关名称 	
+address | 字符串| 非必需 | 用于设置网关所处地方	
 eth0|实体|非必须|设置有线网卡
 eth0/address|字符串|必须| 网卡地址 例如：“192.168.1.123”或者“dhcp”
 eth0/netmask|字符串|非必须| 掩码，如果address设置了 dhcp 不需设置
 eth0/gateway|字符串|非必须| 网关，如果address 设置了dhcp 不需设置
-eth0/mac|字符串|必须| 网卡地址
+eth0/mac|字符串|非必须| 网卡物理地址
 wlan0|实体|非必须|下级字段属性同eth0
 dns|数组|非必须|dns，ip地址字符串格式数组
-ntp|字符串|非必须|时间同步服务器 
-server|数组|非必须|信息平台连接地址
+ntp|字符串|非必须|用于设置时间同步服务器 
+server|数组|非必须|用于设置信息平台连接地址
 device|数组|非必须|设置传感器设备
 device/uid|字符串|非必须|设置传感器设备
 device/optype|整形|必须|操作类型 1 获取未蓝牙列表 2获取已经连接蓝牙列表 3建立蓝牙连接 4删除蓝牙连接 5下发数据至蓝牙
@@ -146,15 +146,15 @@ device/raw|HEX字符串|非必须|optype=5有效，发给蓝牙设备的原始�
 device/needAck|布尔类型|非必须|默认未false optype=5有效表示蓝牙是否会回复数据
 device/mac|布尔类型|非必须|蓝牙mac地址
 device/pin|布尔类型|非必须|连接连接时候 pin码
-passphrase|密码|必须|提供校验的网关密码，密码不对就无法设置
-reboot|字符串|非必须|重启，必须是“reboot”才会执行
-restore|字符串|非必须|重启，必须是“restore”才会执行
-cleardata|字符串|非必须|重启，必须是“cleardata”才会执行
+passphrase|密码|非必须|用于设置以下reboot,restore,cleardata等关键命令时需要的密码
+reboot|字符串|非必须|重启，必须等于passphrase的设置值才会执行
+restore|字符串|非必须|恢复出厂设置，必须等于passphrase的设置值才会执行
+cleardata|字符串|非必须|清除数据，必须等于passphrase的设置值才会执行
 datetime|字符串（时间）|必须|命令时间
 checkupdate|字符串|非必须|检查更新的url地址
-get|数组|非必须|需要获取的参数信息
-#### 应答说明
-##### 2.1 请求get属性位空的时候
+get|数组|非必须|需要获取的参数类型
+
+#### 应答说明（此应答为中心收到命令包时对命令发起方的应答，网关执行命令后的应答包见协议#3）
 字段 | 类型 | 必要性 | 说明
 --- | --- | --- | ---
 status|整形|必须|为0表正确，其它值为错误代码
@@ -162,9 +162,6 @@ error|字符串|非必须|命令执行出错(status!=0)时的对应错误信息
 info|实体|必须|结果信息
 info/gid|实体|必须|原请求cmd/gid原样返回
 sndcount|整形|必须|转发次数
-##### 2.2 请求的get属性不为空的时候
-回复参照 协议 3
-
 
 ### 3. 来自于网关对命令包的应答数据包
 ```JSON
@@ -172,7 +169,7 @@ sndcount|整形|必须|转发次数
     "status": 0,
     "gid": "45007730000801",
     "sid": "sock01",
-    "result": "命令运行结果信息",
+    "error": "命令错误信息",
     "info": {
         "name": "gateway name description",
         "address": "gateway location address",
