@@ -169,7 +169,7 @@ sndcount|整形|必须|转发次数
     "status": 0,
     "gid": "45007730000801",
     "sid": "sock01",
-    "error": "命令错误信息",
+    "error": "命令错误信息",
     "info": {
         "name": "gateway name description",
         "address": "gateway location address",
